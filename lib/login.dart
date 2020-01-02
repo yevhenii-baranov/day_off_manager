@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginWidget extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Days off manager")),
-        body: AccountName());
+        appBar: AppBar(title: Text("Days off manager")), body: AccountName());
   }
 }
 
@@ -21,21 +19,24 @@ class _AccountNameState extends State<AccountName> {
   bool signedIn = false;
 
   final GoogleSignIn signIn = GoogleSignIn(
-      scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']
-  );
+      scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
 
   @override
   Widget build(BuildContext context) {
     return Center(
-        child: Column(children: [
-          MaterialButton(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+          RaisedButton(
             onPressed: () => doLogin(),
             child: Text("Login with Google"),
           ),
-          signedIn ? MaterialButton(
-            child: Text("Log out"),
-            onPressed: () => signOut(),
-          ) : Container(),
+          signedIn
+              ? RaisedButton(
+                  child: Text("Log out"),
+                  onPressed: () => signOut(),
+                )
+              : Container(),
           Text(username == "" ? "" : "Hello, $username")
         ]));
   }
@@ -59,4 +60,3 @@ class _AccountNameState extends State<AccountName> {
     });
   }
 }
-
