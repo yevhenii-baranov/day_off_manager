@@ -1,4 +1,4 @@
-import 'package:day_off_manager/login.dart';
+import 'package:days_off_manager/login.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
