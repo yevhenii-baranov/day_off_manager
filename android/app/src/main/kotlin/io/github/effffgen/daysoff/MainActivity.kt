@@ -1,4 +1,4 @@
-package com.example.day_off_manager
+package io.github.effffgen.daysoff
 
 import android.os.Bundle
 
