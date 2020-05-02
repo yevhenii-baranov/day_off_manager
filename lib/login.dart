@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
@@ -51,18 +51,17 @@ class _AccountNameState extends State<AccountName> {
     if (account != null) {
       var token = await account.getIdToken().then((value) => value.token);
 
-      print(token);
       var response = await http
-          .get('https://days-off-manager-263921.ew.r.appspot.com/',
+          .post(
+          'https://days-off-manager-263921.ew.r.appspot.com/firebasetest',
+          body: token,
           headers:{
-            'Authorization': 'Bearer ' + token,
-            'Content-type': 'application/x-www-form-urlencoded; charset=utf-8',
+            'Content-type': 'application/json; charset=utf-8',
             'Accept': 'text/json'
           });
-      print(response.contentLength);
 
       setState(() {
-        username = token;
+        username = response.body;
         signedIn = true;
       });
 
