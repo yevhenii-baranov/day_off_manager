@@ -52,12 +52,12 @@ class _AccountNameState extends State<AccountName> {
       var token = await account.getIdToken().then((value) => value.token);
 
       var response = await http
-          .post(
-          'https://days-off-manager-263921.ew.r.appspot.com/firebasetest',
-          body: token,
+          .get(
+          'http://days-off-manager-263921.ew.r.appspot.com/',
           headers:{
             'Content-type': 'application/json; charset=utf-8',
-            'Accept': 'text/json'
+            'Accept': 'text/json',
+            'Authorization': 'Bearer ' + token
           });
 
       setState(() {
