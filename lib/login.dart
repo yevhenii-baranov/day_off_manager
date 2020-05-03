@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:http/http.dart' as http;
 
 class LoginWidget extends StatelessWidget {
   @override
@@ -18,8 +20,10 @@ class _AccountNameState extends State<AccountName> {
   String username = "";
   bool signedIn = false;
 
-  final GoogleSignIn signIn = GoogleSignIn(
-      scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly'],
+      hostedDomain: 'teamdev.com');
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -42,18 +46,44 @@ class _AccountNameState extends State<AccountName> {
   }
 
   doLogin() async {
-    var account = await signIn.signIn();
+    var account = await _handleSignIn();
 
     if (account != null) {
+      var token = await account.getIdToken().then((value) => value.token);
+
+      var response = await http
+          .get(
+          'http://days-off-manager-263921.ew.r.appspot.com/',
+          headers:{
+            'Content-type': 'application/json; charset=utf-8',
+            'Accept': 'text/json',
+            'Authorization': 'Bearer ' + token
+          });
+
       setState(() {
-        username = account.displayName;
+        username = response.body;
         signedIn = true;
       });
+
     }
   }
 
+  Future<FirebaseUser> _handleSignIn() async {
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+
+    final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
+    print("signed in " + user.displayName);
+    return user;
+  }
+
   signOut() async {
-    await signIn.signOut();
+    await _googleSignIn.signOut();
     setState(() {
       username = "";
       signedIn = false;
