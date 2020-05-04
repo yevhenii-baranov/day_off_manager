@@ -1,7 +1,5 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:http/http.dart' as http;
 
 class LoginWidget extends StatelessWidget {
   @override
@@ -19,11 +17,16 @@ class AccountName extends StatefulWidget {
 class _AccountNameState extends State<AccountName> {
   String username = "";
   bool signedIn = false;
+  String accessToken = "";
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-      scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly'],
-      hostedDomain: 'teamdev.com');
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+        'https://www.googleapis.com/auth/calendar'
+      ],
+      hostedDomain: 'teamdev.com'
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -41,45 +44,25 @@ class _AccountNameState extends State<AccountName> {
                   onPressed: () => signOut(),
                 )
               : Container(),
-          Text(username == "" ? "" : "Hello, $username")
+          Text(username == "" ? "" : "Hello, $username"),
+          Text(accessToken == "" ? "" : "token: $accessToken")
         ]));
   }
 
   doLogin() async {
-    var account = await _handleSignIn();
+    var account = await _googleSignIn.signIn();
+
 
     if (account != null) {
-      var token = await account.getIdToken().then((value) => value.token);
-
-      var response = await http
-          .get(
-          'http://days-off-manager-263921.ew.r.appspot.com/',
-          headers:{
-            'Content-type': 'application/json; charset=utf-8',
-            'Accept': 'text/json',
-            'Authorization': 'Bearer ' + token
-          });
+      var token = await account.authentication.then((value) => value.accessToken);
 
       setState(() {
-        username = response.body;
+        username = account.email;
+        accessToken = token;
         signedIn = true;
       });
 
     }
-  }
-
-  Future<FirebaseUser> _handleSignIn() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    final FirebaseUser user = (await _auth.signInWithCredential(credential)).user;
-    print("signed in " + user.displayName);
-    return user;
   }
 
   signOut() async {
