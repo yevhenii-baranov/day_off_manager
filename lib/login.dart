@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import 'menu.dart';
+
 class LoginWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -9,15 +11,7 @@ class LoginWidget extends StatelessWidget {
   }
 }
 
-class AccountName extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _AccountNameState();
-}
-
-class _AccountNameState extends State<AccountName> {
-  String username = "";
-  bool signedIn = false;
-  String accessToken = "";
+class AccountName extends StatelessWidget {
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: [
@@ -35,41 +29,21 @@ class _AccountNameState extends State<AccountName> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
           RaisedButton(
-            onPressed: () => doLogin(),
+            onPressed: () => doLogin(context),
             child: Text("Login with Google"),
-          ),
-          signedIn
-              ? RaisedButton(
-                  child: Text("Log out"),
-                  onPressed: () => signOut(),
-                )
-              : Container(),
-          Text(username == "" ? "" : "Hello, $username"),
-          Text(accessToken == "" ? "" : "token: $accessToken")
+          )
         ]));
   }
 
-  doLogin() async {
+  doLogin(BuildContext context) async {
     var account = await _googleSignIn.signIn();
-
 
     if (account != null) {
       var token = await account.authentication.then((value) => value.accessToken);
 
-      setState(() {
-        username = account.email;
-        accessToken = token;
-        signedIn = true;
-      });
+      //todo: set state here
 
+      Navigator.push(context, MaterialPageRoute(builder: (_) => MenuWidget()));
     }
-  }
-
-  signOut() async {
-    await _googleSignIn.signOut();
-    setState(() {
-      username = "";
-      signedIn = false;
-    });
   }
 }
