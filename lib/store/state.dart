@@ -1,44 +1,20 @@
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 @immutable
 class ApplicationState {
+  ApplicationState({@required this.account, @required this.idToken});
 
-  ApplicationState({
-    @required this.clientSecret,
-    @required this.email,
-    @required this.firstName,
-    @required this.lastName,
-    @required this.photoUrl
-  });
-
-  final String clientSecret;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String photoUrl;
+  final GoogleSignInAccount account;
+  final String idToken;
 
   factory ApplicationState.initial() {
-    return ApplicationState(
-        clientSecret: null,
-        firstName: null,
-        lastName: null,
-        email: null,
-        photoUrl: null);
+    return ApplicationState(account: null, idToken: null);
   }
 
-  ApplicationState copyWith(
-      String clientSecret,
-      String photoUrl,
-      String email,
-      String firstName,
-      String lastName) {
+  ApplicationState copyWith(GoogleSignInAccount account, String idToken) {
     return ApplicationState(
-        clientSecret: clientSecret ?? this.clientSecret,
-        photoUrl: photoUrl ?? this.photoUrl,
-        email: email ?? this.email,
-        firstName: firstName ?? this.firstName,
-        lastName: lastName ?? this.lastName
-    );
+        account: account ?? this.account, idToken: idToken ?? this.idToken);
   }
 
   @override
@@ -46,17 +22,9 @@ class ApplicationState {
       identical(this, other) ||
       other is ApplicationState &&
           runtimeType == other.runtimeType &&
-          clientSecret == other.clientSecret &&
-          firstName == other.firstName &&
-          lastName == other.lastName &&
-          email == other.email &&
-          photoUrl == other.photoUrl;
+          account == other.account &&
+          idToken == other.idToken;
 
   @override
-  int get hashCode =>
-      clientSecret.hashCode ^
-      firstName.hashCode ^
-      lastName.hashCode ^
-      email.hashCode ^
-      photoUrl.hashCode;
+  int get hashCode => account.hashCode ^ idToken.hashCode;
 }

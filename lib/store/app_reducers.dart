@@ -1,56 +1,24 @@
 import 'package:days_off_manager/store/actions.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-String clientSecretReducer(String clientSecret, dynamic action) {
+GoogleSignInAccount accountReducer(GoogleSignInAccount account, dynamic action) {
   if (action is LoginAction) {
-    return action.clientSecret;
+    return action.account;
   }
   if (action is LogoutAction) {
     return null;
   }
 
-  return clientSecret;
+  return account;
 }
 
-String emailReducer(String email, dynamic action) {
+String idTokenReducer(String idToken, dynamic action) {
   if (action is LoginAction) {
-    return action.email;
+    return action.idToken;
   }
   if (action is LogoutAction) {
     return null;
   }
 
-  return email;
-}
-
-String firstNameReducer(String firstName, dynamic action) {
-  if (action is LoginAction) {
-    return action.firstName;
-  }
-  if (action is LogoutAction) {
-    return null;
-  }
-
-  return firstName;
-}
-
-String lastNameReducer(String lastName, dynamic action) {
-  if (action is LoginAction) {
-    return action.lastName;
-  }
-  if (action is LogoutAction) {
-    return null;
-  }
-
-  return lastName;
-}
-
-String photoUrlReducer(String photoUrl, dynamic action) {
-  if (action is LoginAction) {
-    return action.photoUrl;
-  }
-  if (action is LogoutAction) {
-    return null;
-  }
-
-  return photoUrl;
+  return idToken;
 }
